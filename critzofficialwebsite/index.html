@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CRITZ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@600;700&display=swap');
+:root{ --red:#e10600; }
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Anton', Arial, sans-serif;-webkit-tap-highlight-color:transparent}
+body,html{height:100%;overflow-x:hidden;background:#000}
+.hero{position:relative;height:100vh;height:100dvh;width:100%;overflow:hidden;color:#fff;isolation:isolate}
+.hero video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;background:#000}
+.hero::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;background:linear-gradient(180deg, rgba(225,6,0,0.15) 0%, rgba(0,0,0,0.75) 100%)}
+header{position:absolute;top:0;width:100%;padding:20px 25px;display:flex;justify-content:space-between;align-items:center;z-index:2;background: rgba(0,0,0,0.4); border-bottom:2px solid rgba(225,6,0,0.6);backdrop-filter: blur(5px);-webkit-backdrop-filter:blur(5px)}
+.logo{font-size:24px;letter-spacing:4px;text-shadow:0 0 20px var(--red)}
+.location{font-size:9px;letter-spacing:2.5px;margin-top:3px}
+.location span{color:var(--red)}
+.nav-right{display:flex;align-items:center;gap:22px}
+.login-link{color:#fff;text-decoration:none;font-size:12px;letter-spacing:1px;font-family:'Inter',sans-serif;font-weight:600}
+.cart-wrap{position:relative;display:flex;text-decoration:none}
+.cart-wrap svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.8}
+.center-content{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:30px;text-align:center;width:100%;padding:0 20px}
+.slogan{font-size:28px;letter-spacing:5px;color:var(--red);text-shadow:0 0 25px var(--red)}
+.center-btn a{background:rgba(225,6,0,0.15);color:#fff;padding:18px 55px;border-radius:50px;text-decoration:none;letter-spacing:5px;font-size:15px;border:1px solid rgba(255,255,255,0.25);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.socials{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,0.25);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);padding:14px 40px;border-radius:50px;display:flex;gap:30px;border:1px solid rgba(255,255,255,0.2);z-index:2;align-items:center}
+.socials a svg{width:26px;height:26px;fill:#fff}
+.snap-s{font-size:22px;color:#fff}
+.socials a{text-decoration:none;color:#fff;display:flex;align-items:center}
+@media(max-width:768px){
+  header{padding:12px 16px;background:rgba(0,0,0,0.32);border-bottom:1.5px solid rgba(225,6,0,0.5);backdrop-filter:blur(12px)}
+  .logo{font-size:18px;letter-spacing:3px}
+  .location{font-size:6.5px;letter-spacing:1.5px;margin-top:2px;opacity:0.8}
+  .nav-right{gap:14px}
+  .login-link{font-size:11px}
+  .center-content{gap:20px;width:92%}
+  .slogan{font-size:clamp(22px, 7.5vw, 28px);letter-spacing:3px;line-height:1.1}
+  .center-btn a{padding:13px 32px;font-size:11px;letter-spacing:3px;border-radius:30px}
+  .socials{bottom:calc(16px + env(safe-area-inset-bottom));padding:10px 22px;gap:20px;border-radius:30px;max-width:90%}
+  .socials a svg{width:20px;height:20px}
+  .snap-s{font-size:18px}
+}
+</style>
+</head>
+<body>
+<section class="hero">
+  <video autoplay muted loop playsinline preload="auto">
+    <source src="vids.mp4" type="video/mp4">
+    <source src="vids.webm" type="video/webm">
+  </video>
+
+  <header>
+    <div><div class="logo">CRITZ</div><div class="location">LAGOS NIGERIA - <span>SHIPPING WORLDWIDE</span></div></div>
+    <div class="nav-right">
+      <a href="login.html" class="login-link">LOGIN</a>
+      <a href="cart.html" class="cart-wrap">
+        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <div class="center-content">
+    <div class="slogan">WEAR THE MOVEMENT</div>
+    <div class="center-btn"><a href="products.html">SHOP NOW</a></div>
+  </div>
+
+  <div class="socials">
+    <a href="https://tiktok.com" target="_blank"><svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
+    <a href="https://instagram.com" target="_blank"><svg viewBox="0 0 24 24"><path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm10 2c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3h10zm-5 2a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6zm4.5-2a1 1 0 100 2 1 1 0 000-2z"/></svg></a>
+    <a href="https://snapchat.com" target="_blank"><div class="snap-s">S</div></a>
+    <a href="https://wa.me/2348012345678" target="_blank"><svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.198-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.296-1.043 1.02-1.043 2.488 0 1.468 1.068 2.884 1.217 3.083.149.198 2.1 3.206 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg></a>
+  </div>
+</section>
+</body>
+</html>
