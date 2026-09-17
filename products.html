@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>SHOP - CRITZ</title>
+<style>
+:root{--red:#e10600;--black:#0a0a0a;--white:#fff;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;-webkit-tap-highlight-color:transparent}
+body{background:var(--black);color:var(--white)}
+body.no-scroll{overflow:hidden;position:fixed;width:100%}
+header{position:fixed;top:0;left:0;width:100%;padding:14px 16px;padding-top:max(14px, env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center;z-index:10;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(225,6,0,0.25)}
+.logo{font-size:18px;font-weight:900;letter-spacing:1px}.logo span{color:var(--red)}
+.nav{display:flex;align-items:center}
+.nav a{color:var(--white);text-decoration:none;margin-left:14px;text-transform:uppercase;font-size:10px;font-weight:800}
+.products{padding:78px 10px 30px;display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;max-width:1400px;margin:0 auto}
+.product-card{background:#111;border:1px solid rgba(225,6,0,0.18);border-radius:14px;overflow:hidden;text-align:center}
+.product-card img{width:100%;height:170px;object-fit:contain;background:#fff;cursor:pointer;padding:8px}
+.info{padding:10px 8px}
+.info h3{text-transform:uppercase;font-size:11px;min-height:26px;display:flex;align-items:center;justify-content:center}
+.price{color:var(--red);font-size:14px;font-weight:900;margin-bottom:8px}
+.view-btn{background:var(--red);color:#fff;border:none;padding:11px;width:100%;font-weight:900;border-radius:8px;font-size:11px}
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:999;opacity:0;visibility:hidden;transition:0.3s}
+.drawer-overlay.active{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:-100%;width:100%;height:100dvh;background:var(--black);z-index:1000;transition:right 0.35s cubic-bezier(0.32,0.72,0,1);display:flex;flex-direction:column}
+.drawer.active{right:0}
+.drawer-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #222}
+.close-btn{font-size:28px;background:rgba(255,255,255,0.08);border:none;color:#fff;width:36px;height:36px;border-radius:50%}
+.drawer-body{flex:1;overflow-y:auto;padding-bottom:20px}
+.drawer-images{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.drawer-images::-webkit-scrollbar{display:none}
+.drawer-images img{width:88%;min-width:88%;height:340px;object-fit:contain;background:#fff;scroll-snap-align:center;flex-shrink:0}
+.drawer-info{padding:16px}
+.drawer-info h2{font-size:20px;text-transform:uppercase;margin-bottom:6px;font-weight:900}
+#drawer-price{font-size:18px;color:var(--red);font-weight:900;margin-bottom:20px}
+.option-group{margin-bottom:18px}
+.option-group h4{font-size:10px;letter-spacing:2px;margin-bottom:10px;color:#888;text-transform:uppercase}
+.sizes{display:flex;gap:8px;flex-wrap:wrap}
+.size-btn{padding:12px 16px;border:1px solid #333;background:transparent;color:#fff;font-size:13px;font-weight:800;min-width:48px;border-radius:8px}
+.size-btn.active{background:#fff;color:#000;border-color:#fff}
+.qty-row{display:flex;align-items:center;margin:16px 0}
+.qty-box{display:flex;border:1px solid #333;border-radius:8px;overflow:hidden}
+.qty-btn{background:#1a1a1a;color:#fff;border:none;padding:12px 16px;font-size:18px;min-width:48px}
+.qty-input{width:50px;text-align:center;background:transparent;border:none;color:#fff;font-size:15px;font-weight:700}
+.btn-group{display:flex;flex-direction:column;gap:12px;margin-top:24px}
+.btn{padding:14px;width:100%;border:none;font-weight:900;text-transform:uppercase;letter-spacing:1px;border-radius:10px;font-size:12px}
+.btn-cart{background:#fff;color:#000}
+.btn-buy{background:var(--red);color:#fff}
+</style>
+</head>
+<body>
+<header><div class="logo">CRI<span>TZ</span></div><div class="nav"><a href="index.html">HOME</a><a href="products.html">SHOP</a><a href="cart.html">🛍️ CART</a></div></header>
+<section class="products" id="productsGrid"><p style="grid-column:span 2;text-align:center;padding:50px;color:#666">Loading products...</p></section>
+<div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+<div class="drawer-header"><h3 style="font-size:11px;letter-spacing:2px;opacity:0.7">SELECT OPTIONS</h3><button class="close-btn" onclick="closeDrawer()">×</button></div>
+<div class="drawer-body">
+<div class="drawer-images" id="drawer-images"></div>
+<div class="drawer-info">
+<h2 id="drawer-title"></h2><p id="drawer-price"></p>
+<div class="option-group"><h4 id="size-label">SIZE: M</h4><div class="sizes" id="size-options"></div></div>
+<div class="qty-row"><div class="qty-box"><button class="qty-btn" onclick="changeQty(-1)">−</button><input type="text" class="qty-input" id="qty" value="1" readonly><button class="qty-btn" onclick="changeQty(1)">+</button></div></div>
+<div class="btn-group"><button class="btn btn-cart" onclick="addToCartFromDrawer()">ADD TO CART</button><button class="btn btn-buy" onclick="buyNow()">BUY IT NOW</button></div>
+</div>
+</div>
+</div>
+<script>
+let productsObj={};
+let productsArray=[];
+let currentProduct=null,selectedSize=null,qty=1;
+
+async function initShop(){
+  try{
+    const res=await fetch('/api/products');
+    productsArray=await res.json();
+    productsObj={};
+    productsArray.forEach(p=> productsObj[p.id]=p);
+    renderGrid();
+  } catch(e){
+    document.getElementById('productsGrid').innerHTML='<p style="color:#666;text-align:center;grid-column:span 2">Failed to load. Add KV in Vercel.</p>';
+  }
+}
+
+function renderGrid(){
+  const grid=document.getElementById('productsGrid');
+  grid.innerHTML='';
+  productsArray.forEach(p=>{
+    grid.innerHTML+=`<div class="product-card"><img src="${p.images[0]}" onclick="openDrawer('${p.id}')"><div class="info"><h3>${p.title}</h3><div class="price">₦${p.price.toLocaleString()}</div><button class="view-btn" onclick="openDrawer('${p.id}')">VIEW</button></div></div>`;
+  });
+}
+
+function openDrawer(id){
+  currentProduct=productsObj[id];selectedSize=currentProduct.sizes[1]||currentProduct.sizes[0];qty=1;
+  document.getElementById('drawer-title').innerText=currentProduct.title;
+  document.getElementById('drawer-price').innerText=`₦${currentProduct.price.toLocaleString()}.00`;
+  document.getElementById('qty').value=qty;
+  const imgDiv=document.getElementById('drawer-images');imgDiv.innerHTML='';
+  currentProduct.images.forEach(img=>{imgDiv.innerHTML+=`<img src="${img}" alt="${currentProduct.title}">`});
+  const sizeDiv=document.getElementById('size-options');sizeDiv.innerHTML='';
+  currentProduct.sizes.forEach(s=>{sizeDiv.innerHTML+=`<button class="size-btn ${s===selectedSize?'active':''}" onclick="selectSize('${s}',this)">${s}</button>`});
+  document.getElementById('size-label').innerText=`SIZE: ${selectedSize}`;
+  document.body.classList.add('no-scroll');
+  document.getElementById('overlay').classList.add('active');
+  document.getElementById('drawer').classList.add('active');
+}
+function closeDrawer(){document.body.classList.remove('no-scroll');document.getElementById('overlay').classList.remove('active');document.getElementById('drawer').classList.remove('active');}
+function selectSize(size,el){selectedSize=size;document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('size-label').innerText=`SIZE: ${selectedSize}`;}
+function changeQty(v){qty+=v;if(qty<1)qty=1;document.getElementById('qty').value=qty}
+function addToCartFromDrawer(){let cart=JSON.parse(localStorage.getItem('stylevaultCart'))||[];let key=currentProduct.title+'-'+selectedSize;let ex=cart.find(i=>i.key===key);if(ex)ex.qty+=qty; else cart.push({key:key,name:currentProduct.title,size:selectedSize,price:currentProduct.price,img:currentProduct.images[0],qty:qty});localStorage.setItem('stylevaultCart',JSON.stringify(cart));alert(`${currentProduct.title} - ${selectedSize} x${qty} added!`);closeDrawer();}
+function buyNow(){let cart=JSON.parse(localStorage.getItem('stylevaultCart'))||[];let key=currentProduct.title+'-'+selectedSize;let ex=cart.find(i=>i.key===key);if(ex)ex.qty+=qty; else cart.push({key:key,name:currentProduct.title,size:selectedSize,price:currentProduct.price,img:currentProduct.images[0],qty:qty});localStorage.setItem('stylevaultCart',JSON.stringify(cart));window.location.href='cart.html';}
+
+initShop();
+</script>
+</body>
+</html>

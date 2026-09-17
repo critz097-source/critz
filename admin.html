@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONTROL ROOM - CRITZ</title>
+<style>
+:root{--red:#e10600}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0a0a0a;color:#fff;padding:16px}
+.login{max-width:400px;margin:80px auto;text-align:center;background:#111;padding:30px;border-radius:16px;border:1px solid #222}
+.login h1{letter-spacing:3px;margin-bottom:10px;font-weight:900}
+.login h1 span{color:var(--red)}
+.login input{width:100%;padding:14px;background:#000;border:1px solid #333;color:#fff;border-radius:10px;margin:15px 0}
+.login button{width:100%;padding:14px;background:var(--red);border:none;color:#fff;font-weight:900;border-radius:10px}
+
+#panel{display:none;max-width:1000px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid #222;margin-bottom:20px}
+.logo{font-weight:900;font-size:22px;letter-spacing:2px}.logo span{color:var(--red)}
+.stat{background:#111;border:1px solid #222;padding:14px;border-radius:12px;text-align:center;margin-bottom:20px}
+
+.add-box{background:#111;border:1px solid rgba(225,6,0,0.3);padding:16px;border-radius:14px;margin-bottom:24px}
+.add-box h3{font-size:11px;letter-spacing:2px;color:#888;margin-bottom:12px}
+input{width:100%;padding:12px;background:#000;border:1px solid #333;color:#fff;border-radius:8px;margin-bottom:10px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sizes{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.size-c{padding:10px 14px;border:1px solid #333;border-radius:8px;font-size:12px;cursor:pointer}
+.size-c.active{background:#fff;color:#000}
+.btn{padding:13px;border:none;border-radius:10px;font-weight:900;cursor:pointer;text-transform:uppercase;font-size:12px}
+.btn-red{background:var(--red);color:#fff;width:100%}
+.btn-white{background:#fff;color:#000}
+
+.products-list{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.p-card{background:#111;border:1px solid #222;border-radius:12px;padding:10px}
+.p-card img{width:100%;height:150px;object-fit:contain;background:#fff;border-radius:8px}
+.p-card h4{font-size:10px;margin:8px 0;min-height:28px}
+.price{color:var(--red);font-weight:900;font-size:13px}
+.actions{display:flex;gap:6px;margin-top:8px}
+.del{flex:1;background:rgba(225,6,0,0.15);color:var(--red);border:1px solid var(--red);padding:8px;border-radius:6px;font-weight:800;font-size:10px}
+.edit{flex:1;background:#fff;color:#000;border:none;padding:8px;border-radius:6px;font-weight:800;font-size:10px}
+@media(min-width:700px){.products-list{grid-template-columns:repeat(4,1fr)}.row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="login" id="loginBox">
+<h1>CRI<span>TZ</span> CONTROL</h1>
+<p style="font-size:10px;color:#666;letter-spacing:2px">ENTER PIN</p>
+<input type="password" id="pin" placeholder="0970">
+<button onclick="login()">ENTER ROOM</button>
+<p style="font-size:9px;color:#333;margin-top:10px">PIN is 0970</p>
+</div>
+
+<div id="panel">
+<div class="header"><div class="logo">CRI<span>TZ</span> ROOM</div><button class="btn btn-white" onclick="logout()">LOGOUT</button></div>
+<div class="stat"><b id="totalP">0</b> PRODUCTS LIVE</div>
+
+<div class="add-box">
+<h3 id="formTitle">ADD NEW PRODUCT</h3>
+<input id="pTitle" placeholder="Product Name e.g CRITZ TEE">
+<div class="row">
+<input id="pPrice" type="number" placeholder="Price e.g 35000">
+<input id="pStock" type="number" placeholder="Stock (optional)">
+</div>
+<input id="pImg1" placeholder="Image 1 link - e.g hoodie.png or https://...">
+<input id="pImg2" placeholder="Image 2 link - back view (optional)">
+<p style="font-size:10px;color:#888;margin:8px 0">SIZES - click to select</p>
+<div class="sizes">
+<div class="size-c active" onclick="this.classList.toggle('active')">M</div>
+<div class="size-c" onclick="this.classList.toggle('active')">S</div>
+<div class="size-c" onclick="this.classList.toggle('active')">L</div>
+<div class="size-c" onclick="this.classList.toggle('active')">XL</div>
+<div class="size-c" onclick="this.classList.toggle('active')">XXL</div>
+</div>
+<button class="btn btn-red" id="saveBtn" onclick="saveProduct()">ADD PRODUCT +</button>
+<button class="btn btn-white" id="cancelBtn" style="display:none;margin-top:8px;width:100%" onclick="cancelEdit()">CANCEL</button>
+</div>
+
+<div class="products-list" id="list"></div>
+</div>
+
+<script>
+const PIN="0970";
+let products=[];
+let editId=null;
+
+async function login(){
+ if(document.getElementById('pin').value!==PIN){alert('Wrong PIN');return}
+ document.getElementById('loginBox').style.display='none';
+ document.getElementById('panel').style.display='block';
+ await loadProducts();
+}
+function logout(){location.reload()}
+
+async function loadProducts(){
+ const res=await fetch('/api/products');
+ products=await res.json();
+ render();
+}
+
+function render(){
+ const list=document.getElementById('list');
+ list.innerHTML='';
+ document.getElementById('totalP').innerText=products.length;
+ products.forEach(p=>{
+   list.innerHTML+=`<div class="p-card"><img src="${p.images[0]}"><h4>${p.title}</h4><div class="price">₦${p.price.toLocaleString()}</div><div style="font-size:9px;color:#666;margin-top:4px">${p.sizes.join(' ')}</div><div class="actions"><button class="edit" onclick="editP('${p.id}')">EDIT</button><button class="del" onclick="deleteP('${p.id}')">DELETE</button></div></div>`;
+ });
+}
+
+async function saveProduct(){
+ const title=document.getElementById('pTitle').value.trim();
+ const price=parseInt(document.getElementById('pPrice').value);
+ const img1=document.getElementById('pImg1').value.trim();
+ const img2=document.getElementById('pImg2').value.trim();
+ const sizes=[...document.querySelectorAll('.size-c.active')].map(s=>s.innerText);
+ if(!title||!price||!img1){alert('Fill Title, Price, Image 1');return}
+
+ if(editId){
+   const idx=products.findIndex(p=>p.id===editId);
+   products[idx].title=title; products[idx].price=price; products[idx].images=img2?[img1,img2]:[img1]; products[idx].sizes=sizes;
+   editId=null;
+   document.getElementById('formTitle').innerText='ADD NEW PRODUCT';
+   document.getElementById('saveBtn').innerText='ADD PRODUCT +';
+   document.getElementById('cancelBtn').style.display='none';
+ } else {
+   products.push({id:Date.now().toString(),title,price,images:img2?[img1,img2]:[img1],sizes});
+ }
+
+ await fetch('/api/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(products)});
+ document.getElementById('pTitle').value='';document.getElementById('pPrice').value='';document.getElementById('pImg1').value='';document.getElementById('pImg2').value='';
+ render();
+}
+
+async function deleteP(id){
+ if(!confirm('Delete this product?')) return;
+ products=products.filter(p=>p.id!==id);
+ await fetch('/api/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(products)});
+ render();
+}
+
+function editP(id){
+ const p=products.find(x=>x.id===id);
+ editId=id;
+ document.getElementById('pTitle').value=p.title;
+ document.getElementById('pPrice').value=p.price;
+ document.getElementById('pImg1').value=p.images[0]||'';
+ document.getElementById('pImg2').value=p.images[1]||'';
+ document.querySelectorAll('.size-c').forEach(el=>{
+   if(p.sizes.includes(el.innerText)) el.classList.add('active'); else el.classList.remove('active');
+ });
+ document.getElementById('formTitle').innerText='EDITING: '+p.title;
+ document.getElementById('saveBtn').innerText='UPDATE PRODUCT';
+ document.getElementById('cancelBtn').style.display='block';
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function cancelEdit(){
+ editId=null;
+ document.getElementById('pTitle').value='';document.getElementById('pPrice').value='';document.getElementById('pImg1').value='';document.getElementById('pImg2').value='';
+ document.getElementById('formTitle').innerText='ADD NEW PRODUCT';
+ document.getElementById('saveBtn').innerText='ADD PRODUCT +';
+ document.getElementById('cancelBtn').style.display='none';
+}
+</script>
+</body>
+</html>
